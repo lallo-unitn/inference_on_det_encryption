@@ -1,0 +1,602 @@
+-----------------------Main.java-----------------------
+
+import java.util.*;
+
+public class Main {
+    private static final int ALPHA = 4;
+
+    public static void main(String[] args) {
+        LineReader firstNameReader = new LineReader();
+        ArrayList<String> namesOrderedFrequency =
+                firstNameReader.readLinesFromFile("./src/main/resources/firstnames.txt", 100);
+        //firstNameReader.displayLinesAndPos(namesOrderedFrequency);
+
+        LineReader lastNameReader = new LineReader();
+        ArrayList<String> lastnamesOrderedFrequency =
+                lastNameReader.readLinesFromFile("./src/main/resources/lastnames.txt", 80);
+        //lastNameReader.displayLinesAndPos(lastnamesOrderedFrequency);
+
+
+        Database db = new Database();
+        System.out.println("Number of distinct first names: " + db.getFirstNameCount());
+
+        List<Student> students = db.getStudents();
+
+        // order list by surname
+        students.sort(Comparator.comparing(s -> s.enc_surname));
+
+        HashMap<String, Integer> lastnameFrequenciesOrdered = db.getLastnameFrequenciesOrdered();
+
+        // print lastnameFrequenciesOrdered
+        for (Map.Entry<String, Integer> entry : lastnameFrequenciesOrdered.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+        LookupTable lookupNames = new LookupTable(db.getFirstnameFrequenciesOrdered(), namesOrderedFrequency);
+
+        LookupTable lookupLastNames = new LookupTable(lastnameFrequenciesOrdered, lastnamesOrderedFrequency);
+
+        // print lastnameFrequenciesOrdered
+        for (Map.Entry<String, Integer> entry : lastnameFrequenciesOrdered.entrySet()) {
+            System.out.println(entry.getKey() + " | " + lookupLastNames.lookup.get(entry.getKey()) + ": " + entry.getValue());
+        }
+
+        List<Student> secondToTopStudents = db.getSecondToTopStudents();
+
+        // print number of students with the second most common last name
+        System.out.println("Number of students with the second most common last name: " + secondToTopStudents.size());
+
+        // iterate on the list of last names
+        for (Student student : secondToTopStudents) {
+            System.out.println(
+                    lookupNames.lookup.get(student.enc_name) + " " +
+                            lookupLastNames.lookup.get(student.enc_surname)
+            );
+        }
+
+        // order names alphabetically
+        ArrayList<String> lastNamesAlphaOrder = new ArrayList<>(lastnamesOrderedFrequency);
+        lastNamesAlphaOrder.sort(String::compareTo);
+
+        IndexMatrix indexMatrix = new IndexMatrix(students, lastNamesAlphaOrder, lookupLastNames.lookup);
+        //indexMatrix.printMatrixToFile("./src/main/resources/matrix.txt");
+
+        HashMap<String, Integer> lastnameFrequencies = new HashMap<>();
+
+        // iterate on the list of last names
+        for (String lastName : lastNamesAlphaOrder) {
+            lastnameFrequencies.put(lastName, indexMatrix.getSecStudentsFromSurname(lastName, ALPHA).size());
+        }
+
+        // Sort the map by value using a list
+        List<Map.Entry<String, Integer>> list = new LinkedList<>(lastnameFrequencies.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+
+        // print chart Lastname_Frequency_Distribution.png
+        ChartBuilder.printChartToFile(
+                ChartBuilder.buildChart(lookupLastNames.lookup, lastnameFrequenciesOrdered, false),
+                "Lastname_Frequency_Distribution.png"
+        );
+
+        // print chart Lastname_Frequency_Distribution_Plain.png
+        ChartBuilder.printChartToFile(
+                ChartBuilder.buildChart(lookupLastNames.lookup, lastnameFrequenciesOrdered, true),
+                "Lastname_Frequency_Distribution_Plain.png"
+        );
+
+        // print chart Secure_Lastname_Frequency_Distribution.png
+        ChartBuilder.printChartToFile(
+                ChartBuilder.buildSecChart(lookupLastNames.lookup, list, false),
+                "Secure_Lastname_Frequency_Distribution.png"
+        );
+
+        // print chart Secure_Lastname_Frequency_Distribution.png
+        ChartBuilder.printChartToFile(
+                ChartBuilder.buildSecChart(lookupLastNames.lookup, list, true),
+                "Secure_Lastname_Frequency_Distribution_Plain.png"
+        );
+
+        indexMatrix.getSecStudentsFromSurname("Wang", ALPHA).forEach(System.out::println);
+    }
+}
+
+-----------------------Main.java-----------------------
+
+-----------------------Student.java-----------------------
+
+import java.util.Objects;
+
+public class Student {
+    public String enc_name;
+    public String enc_grade;
+    public String enc_surname;
+
+    public Student(String enc_name, String enc_grade, String enc_surname) {
+        this.enc_name = enc_name;
+        this.enc_grade = enc_grade;
+        this.enc_surname = enc_surname;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(enc_name, student.enc_name) && Objects.equals(enc_grade, student.enc_grade) && Objects.equals(enc_surname, student.enc_surname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enc_name, enc_grade, enc_surname);
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "enc_name='" + enc_name + '\'' +
+                ", enc_surname='" + enc_surname + '\'' +
+                ", enc_grade='" + enc_grade + '\'' +
+                '}';
+    }
+}
+
+-----------------------Student.java-----------------------
+
+-----------------------LineReader.java-----------------------
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class LineReader {
+
+
+    // Method to read names from a file and count their occurrences
+    public ArrayList<String> readLinesFromFile(String fileName, int max) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            ArrayList<String> linesOrderedFrequency = new ArrayList<String>();
+
+            // Read first 100 lines (line) from the file
+            for (int i = 0; i < max; i++) {
+                line = reader.readLine();
+                linesOrderedFrequency.add(line);
+            }
+
+            /*while ((line = reader.readLine()) != null) {
+                linesOrderedFrequency.add(line);
+            }*/
+            return linesOrderedFrequency;
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Method to display the contents of the map (names and their counts)
+    public void displayLinesAndPos(ArrayList<String> linesOrderedFrequency) {
+        for (String line : linesOrderedFrequency) {
+            System.out.println("Name: " + line + ", Position: " + linesOrderedFrequency.indexOf(line));
+        }
+    }
+}
+
+-----------------------LineReader.java-----------------------
+
+-----------------------Database.java-----------------------
+
+import java.sql.*;
+import java.util.*;
+
+public class Database {
+
+    private static final String url = "jdbc:sqlite:/home/lallo/uni/cloud_security/assignment_2/cryptoDB/encdb.sqlite";
+
+    public int getFirstNameCount() {
+        String query = "SELECT COUNT(DISTINCT enc_firstname) FROM enc_students";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public HashMap<String, Integer> getLastnameFrequenciesOrdered() {
+        String query = "SELECT enc_lastname FROM enc_students";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            HashMap<String, Integer> lastnameFrequencies = new HashMap<>();
+            while (rs.next()) {
+                String lastname = rs.getString("enc_lastname");
+                if (lastnameFrequencies.containsKey(lastname)) {
+                    lastnameFrequencies.put(lastname, lastnameFrequencies.get(lastname) + 1);
+                } else {
+                    lastnameFrequencies.put(lastname, 1);
+                }
+            }
+
+            return orderHashMapByValue(lastnameFrequencies);
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // determine first name frequencies
+    public HashMap<String, Integer> getFirstnameFrequenciesOrdered() {
+        String query = "SELECT enc_firstname FROM enc_students";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            HashMap<String, Integer> firstnameFrequencies = new HashMap<>();
+            while (rs.next()) {
+                String firstname = rs.getString("enc_firstname");
+                if (firstnameFrequencies.containsKey(firstname)) {
+                    firstnameFrequencies.put(firstname, firstnameFrequencies.get(firstname) + 1);
+                } else {
+                    firstnameFrequencies.put(firstname, 1);
+                }
+            }
+
+            return orderHashMapByValue(firstnameFrequencies);
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public String getSecondUniqueHighestValue() {
+        String query = "SELECT enc_grade FROM ("
+                + "    SELECT DISTINCT enc_grade"
+                + "    FROM enc_students"
+                + "    ORDER BY enc_grade DESC"
+                + ") as eseg LIMIT 1 OFFSET 1;";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            // Execute the query
+            ResultSet rs = pstmt.executeQuery();
+
+            // Process the result
+            if (rs.next()) {
+                return rs.getString("enc_grade");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Student> getSecondToTopStudents() {
+        String secondValue = getSecondUniqueHighestValue();
+        String query = "SELECT enc_firstname, enc_lastname FROM enc_students WHERE enc_grade = ?";
+        List<Student> resultList = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, secondValue);
+            ResultSet rs = pstmt.executeQuery();
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                Student student = null;
+                for (int i = 1; i <= columnCount; i++) {
+                    student = new Student(
+                            rs.getString("enc_firstname"),
+                            secondValue,
+                            rs.getString("enc_lastname")
+                    );
+                }
+                resultList.add(student);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return resultList;
+    }
+
+    // get students
+    public List<Student> getStudents() {
+        String query = "SELECT enc_firstname, enc_grade, enc_lastname FROM enc_students";
+        List<Student> resultList = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                Student student = null;
+                for (int i = 1; i <= columnCount; i++) {
+                    student = new Student(
+                            rs.getString("enc_firstname"),
+                            rs.getString("enc_grade"),
+                            rs.getString("enc_lastname")
+                    );
+                }
+                resultList.add(student);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        return resultList;
+    }
+
+    private void displayLastnameFrequencies(HashMap<String, Integer> lastnameFrequencies) {
+        System.out.println("Lastname Frequencies:");
+        for (Map.Entry<String, Integer> entry : lastnameFrequencies.entrySet()) {
+            System.out.println("Lastname: " + entry.getKey() + ", Frequency: " + entry.getValue());
+        }
+    }
+
+    // display first name frequencies
+    private void displayFirstnameFrequencies(HashMap<String, Integer> firstnameFrequencies) {
+        System.out.println("Firstname Frequencies:");
+        for (Map.Entry<String, Integer> entry : firstnameFrequencies.entrySet()) {
+            System.out.println("Firstname: " + entry.getKey() + ", Frequency: " + entry.getValue());
+        }
+    }
+
+    private HashMap<String, Integer> orderHashMapByValue(HashMap<String, Integer> map) {
+        List<Map.Entry<String, Integer>> list = new LinkedList<>(map.entrySet());
+        // Sort the list in ascending order
+        list.sort(Map.Entry.comparingByValue());
+
+        HashMap<String, Integer> lastnameFrequenciesOrdered = new LinkedHashMap<>();
+
+        // put data from sorted list to hashmap
+        for (Map.Entry<String, Integer> aa : list) {
+            lastnameFrequenciesOrdered.put(aa.getKey(), aa.getValue());
+        }
+
+        return lastnameFrequenciesOrdered;
+    }
+
+}
+
+
+-----------------------Database.java-----------------------
+
+-----------------------LookupTable.java-----------------------
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class LookupTable {
+    HashMap<String, String> lookup;
+
+    public LookupTable(HashMap<String, Integer> hashFrequenciesOrdered, ArrayList<String> fileOrderedFrequency) {
+        HashMap<String, String> lookup = new HashMap<>();
+        int i = fileOrderedFrequency.size() - 1;
+        //System.out.println("====================START===============");
+        for (Map.Entry<String, Integer> entry : hashFrequenciesOrdered.entrySet()) {
+            lookup.put(entry.getKey(), fileOrderedFrequency.get(i));
+            //System.out.println(entry.getKey() + " | " + fileOrderedFrequency.get(i) + ": " + entry.getValue());
+            i--;
+        }
+        System.out.println("==================END=================");
+        this.lookup = lookup;
+    }
+}
+
+-----------------------LookupTable.java-----------------------
+
+-----------------------ChartBuilder.java-----------------------
+
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.style.Styler;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ChartBuilder {
+    private CategoryChart chart;
+
+    public static CategoryChart buildSecChart(HashMap<String, String> lookupLastNames, List<Map.Entry<String, Integer>> list, boolean plaintext) {
+        // Create Chart
+        CategoryChart chart = new CategoryChartBuilder().width(1680).height(2000).title("Secure Lastname Frequency Distribution").xAxisTitle("Lastname").yAxisTitle("Frequency").build();
+
+        // Customize Chart
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        chart.getStyler().setXAxisLabelRotation(90);
+        chart.getStyler().setPlotGridLinesVisible(false);
+
+        // invert lookupLastNames
+        HashMap<String, String> lookupLastNamesInverted = new HashMap<>();
+        for (Map.Entry<String, String> entry : lookupLastNames.entrySet()) {
+            lookupLastNamesInverted.put(entry.getValue(), entry.getKey());
+        }
+
+        //System.out.println("Wang: " + lookupLastNamesInverted.get("Wang"));
+        //System.out.println("4f09d41d4e6975a14551b684e7ee7739c059bddfd813a8a05a74f88690791445: " + lookupLastNames.get("4f09d41d4e6975a14551b684e7ee7739c059bddfd813a8a05a74f88690791445"));
+
+        // Extract sorted keys and values into separate lists
+        List<String> sortedKeys = new ArrayList<>();
+        List<Integer> sortedValues = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : list) {
+            if (plaintext) {
+                sortedKeys.add(entry.getKey());
+            } else {
+                sortedKeys.add(lookupLastNamesInverted.get(entry.getKey()));
+            }
+            sortedValues.add(entry.getValue());
+        }
+
+        // Add data to the chart from list and order it by value
+        chart.addSeries("Frequency", sortedKeys, sortedValues);
+        return chart;
+    }
+
+    public static CategoryChart buildChart(HashMap<String, String> lookupLastNames, HashMap<String, Integer> lastnameFrequencies, boolean plaintext) {
+        // Create Chart
+        CategoryChart chart = new CategoryChartBuilder().width(1680).height(2000).title("Lastname Frequency Distribution").xAxisTitle("Lastname").yAxisTitle("Frequency").build();
+
+        // Customize Chart
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        chart.getStyler().setXAxisLabelRotation(90);
+        chart.getStyler().setPlotGridLinesVisible(false);
+        ArrayList<String> keySet = new ArrayList<>(lastnameFrequencies.keySet());
+        ArrayList<String> tmp = new ArrayList<>();
+        //iterate keyset
+        for (String key : keySet) {
+            if (plaintext) {
+                tmp.add(lookupLastNames.get(key));
+            } else {
+                tmp.add(key);
+            }
+        }
+
+        // Add data
+        chart.addSeries(
+                "Frequency",
+                tmp,
+                new ArrayList<>(lastnameFrequencies.values())
+        );
+        return chart;
+    }
+
+    public static void printChartToFile(CategoryChart chart, String filePath) {
+        try {
+            BitmapEncoder.saveBitmap(chart, filePath, BitmapEncoder.BitmapFormat.PNG);
+            //System.out.println("Chart saved as PDF: Lastname_Frequency_Distribution.pdf");
+        } catch (IOException e) {
+            System.out.println("Error saving chart as PDF: " + e.getMessage());
+        }
+    }
+}
+
+
+-----------------------ChartBuilder.java-----------------------
+
+-----------------------IndexMatrix.java-----------------------
+
+public class IndexMatrix {
+    public boolean[][] matrix = null;
+    public int rows = 0;
+    public int cols = 0;
+    public List<String> surnameList = null;
+    public List<Student> studentList = null;
+    public HashMap<String, String> lookupLastNames = null;
+
+    public IndexMatrix(List<Student> studentList, List<String> surnameList, HashMap<String, String> lookupLastNames) {
+        this.surnameList = surnameList;
+        this.studentList = studentList;
+        this.lookupLastNames = lookupLastNames;
+        this.rows = surnameList.size();
+        this.cols = studentList.size();
+        matrix = new boolean[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                matrix[i][j] = surnameList.get(i).contains(lookupLastNames.get(studentList.get(j).enc_surname));
+            }
+        }
+    }
+
+    // get students from surname using matrix
+    public List<Student> getStudentsFromSurname(String surname) {
+        List<Student> students = new java.util.ArrayList<>();
+        int i = surnameList.indexOf(surname);
+        if (i != -1) {
+            for (int j = 0; j < cols; j++) {
+                if (matrix[i][j]) {
+                    students.add(studentList.get(j));
+                }
+            }
+        }
+        return students;
+    }
+
+    // get students from surname using matrix
+    public List<Student> getSecStudentsFromSurname(String surname, int alpha) {
+        List<Student> students = new java.util.ArrayList<>();
+        int i = surnameList.indexOf(surname);
+
+        //compute cluster boundaries
+        int clusterUpperBound = i;
+        for (int j = i; (j % alpha != 0 || j == i) && (j < rows); j++) {
+            clusterUpperBound = j;
+        }
+        int clusterLowerBound = i;
+        for (int j = i; (j % alpha != 0) && j > 0; j--) {
+            clusterLowerBound = j - 1;
+        }
+        //System.out.println("i: " + i);
+        //System.out.println("Cluster upper bound: " + clusterUpperBound);
+        //System.out.println("Cluster lower bound: " + clusterLowerBound);
+
+        if (i != -1) {
+            for (int j = i; j <= clusterUpperBound && (j < rows); j++) {
+                for (int k = 0; k < cols; k++) {
+                    if (matrix[j][k]) {
+                        students.add(studentList.get(k));
+                    }
+                }
+            }
+            i--;
+            for (int j = i; j >= clusterLowerBound; j--) {
+                for (int k = 0; k < cols; k++) {
+                    if (matrix[j][k]) {
+                        students.add(studentList.get(k));
+                    }
+                }
+            }
+        }
+
+        return students;
+    }
+
+    //print matrix to file
+    public void printMatrixToFile(String fileName) {
+        try (java.io.PrintWriter writer = new java.io.PrintWriter(fileName)) {
+            for (int i = 0; i < rows; i++) {
+                writer.print(surnameList.get(i) + " ");
+                //System.out.println(surnameList.get(i));
+                writer.print("[ ");
+                for (int j = 0; j < cols; j++) {
+                    writer.print(lookupLastNames.get(studentList.get(j).enc_surname) + "{ ");
+                    writer.print(matrix[i][j] + " }  ");
+                }
+                writer.print(" ]");
+                writer.println();
+                writer.println();
+            }
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("An error occurred while writing the file: " + e.getMessage());
+        }
+    }
+}
+
+
+-----------------------IndexMatrix.java-----------------------
