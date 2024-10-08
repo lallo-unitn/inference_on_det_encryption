@@ -26,6 +26,8 @@ In the database, there are 100 unique first names stored. This number was determ
     }
 \end{lstlisting}
 
+\newpage
+
 \subsection{Distribution of last names}
 
 To plot the distribution of the encrypted last names we determined the number of occurrences of each last name present in the database.
@@ -62,7 +64,7 @@ Following is the code to compute the last name frequency.
 
 Following, the graph with lastnames in chipertext.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{03-ex2/Lastname_Frequency_Distribution.png}
     \caption{Distribution of encrypted last names.}
@@ -73,15 +75,16 @@ The graph shows the distribution of the encrypted last names names. The distribu
 
 Following, the same graph with names in plaintext.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{03-ex2/Lastname_Frequency_Distribution_Plain.png}
-    \caption{Distribution of encrypted last names.}
+    \caption{Distribution of the last names in plaintext.}
     \label{fig:Distribution-of-last-names-plain}
 \end{figure}
 
 As it can be seen, the last name Wang (which is the most popular last name) is mapped to the ciphertext \\ \texttt{4f09d41d4e6975a14551b684e7ee7739c059bddfd813a8a05a74f88690791445}.
 
+\newpage
 \subsection{Full names of all students who scored 99 points}
 
 There are 100 unique values stored in the database for grades. We also know that the grades can range from 1 to 100. This means that the data set for the grades is a dense dataset since the complete plaintext space is encrypted. Since the grades are encrypted in an order-preserving manner, the lower numeric value of an encrypted grade corresponds to a lower plaintext value. Based on this information, we sorted the ciphertexts decreasingly, this is how we were able to recover the ciphertext value corresponding to 99.
@@ -147,7 +150,7 @@ public String getSecondUniqueHighestValue() {
         return resultList;
     }
 \end{lstlisting}
-
+\newpage
 \subsection{Implementing $(\alpha, t)$-secure index as mitigation}
 
 The main idea behind the $(\alpha,t)$-secure index is to protect against inference attacks by adding noise to the data in a structured way via clustering the result sets into different partitions. The $\alpha$ parameter specifies the minimum number of keywords that must share a similar access pattern. A higher $\alpha$ means more keywords will be grouped together, increasing privacy but possibly introducing more noise. The $t$ parameter indicates the maximum allowable Hamming distance (i.e., the number of differing bits) between the access patterns of keywords within the same group. A smaller $t$ ensures more similarity between access patterns, improving privacy but potentially leading to more false positives during search results.
@@ -156,23 +159,22 @@ We implemented a $(4,0)$-secure index by a lookup function, which when searched 
 
 Following, is the graph of last name frequencies after implementing a $(4, 0)$-secure index search. As it can be seen, the previous easily mappable distribution is gone, instead, clusters of 4 appeared.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{03-ex2/Secure_Lastname_Frequency_Distribution.png}
-    \caption{Distribution of encrypted last names.}
+    \caption{Distribution of encrypted last names with (4,0)-secure index.}
     \label{fig:Distribution-of-last-names-sec}
 \end{figure}
 
 When looking at the plaintext equivalents of the last names from the previous graph, it can also be observed, that only the distribution changed, but so did the few most frequent last names too.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{03-ex2/Secure_Lastname_Frequency_Distribution_Plain.png}
-    \caption{Distribution of the last names in plaintext.}
+    \caption{Distribution of the last names in plaintext with (4,0)-secure index.}
     \label{fig:Distribution-of-last-names-plain-sec}
 \end{figure}
 
-\newpage
 
 Following, the code 
 

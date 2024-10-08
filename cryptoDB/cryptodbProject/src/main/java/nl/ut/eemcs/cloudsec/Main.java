@@ -43,8 +43,8 @@ public class Main {
 
         List<Student> secondToTopStudents = db.getSecondToTopStudents();
 
-        // print number of students with the second most common last name
-        System.out.println("Number of students with the second most common last name: " + secondToTopStudents.size());
+        // print number of students with the second highest grade
+        System.out.println("Number of students with second highest grade: " + secondToTopStudents.size());
 
         // iterate on the list of last names
         for (Student student : secondToTopStudents) {
@@ -95,6 +95,6 @@ public class Main {
                 "Secure_Lastname_Frequency_Distribution_Plain.png"
         );
 
-        indexMatrix.getSecStudentsFromSurname("Wang", ALPHA).forEach(System.out::println);
+        //indexMatrix.getSecStudentsFromSurname("Wang", ALPHA).forEach(System.out::println);
     }
 }

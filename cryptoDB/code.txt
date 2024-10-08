@@ -193,7 +193,7 @@ import java.util.*;
 
 public class Database {
 
-    private static final String url = "jdbc:sqlite:/home/lallo/uni/cloud_security/assignment_2/cryptoDB/encdb.sqlite";
+    private static final String url = "jdbc:sqlite:./src/main/resources/encdb.sqlite";
 
     public int getFirstNameCount() {
         String query = "SELECT COUNT(DISTINCT enc_firstname) FROM enc_students";
