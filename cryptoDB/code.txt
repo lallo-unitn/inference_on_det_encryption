@@ -288,13 +288,14 @@ public class Database {
 
     public List<Student> getSecondToTopStudents() {
         String secondValue = getSecondUniqueHighestValue();
-        String query = "SELECT enc_firstname, enc_lastname FROM enc_students WHERE enc_grade = ?";
+        String query = "SELECT enc_firstname, enc_lastname FROM enc_students WHERE cast(enc_grade as real) = ("
+                + "    SELECT DISTINCT cast(enc_grade as real) as enc_grade_real"
+                + "    FROM enc_students"
+                + "    ORDER BY enc_grade_real DESC LIMIT 1 OFFSET 1);";
         List<Student> resultList = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, secondValue);
             ResultSet rs = pstmt.executeQuery();
 
             ResultSetMetaData metaData = rs.getMetaData();
