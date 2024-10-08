@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.9.26)  8 OCT 2024 12:05
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024/Arch Linux) (preloaded format=pdflatex 2024.9.26)  8 OCT 2024 12:28
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -934,12 +934,9 @@ LaTeX Font Info:    Trying to load font information for T1+lmss on input line 1
 (/usr/share/texmf-dist/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (./02-ex1/target.tex
-
-LaTeX Warning: Citation 'article:curtmola' on page 1 undefined on input line 6.
-
-
 LaTeX Font Info:    Trying to load font information for OMS+zplm on input line 
 21.
+
 (/usr/share/texmf-dist/tex/latex/psnfss/omszplm.fd
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
@@ -954,46 +951,52 @@ Missing character: There is no ý in font lmsy7!
 File: lstlang1.sty 2024/02/21 1.10 listings language file
 )
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 7.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 7
-.
+nput line 10.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
+0.
 
 (/usr/share/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [3]
-<03-ex2/Lastname_Frequency_Distribution.png, id=86, 1686.3pt x 2007.5pt>
+<03-ex2/Lastname_Frequency_Distribution.png, id=85, 1686.3pt x 2007.5pt>
 File: 03-ex2/Lastname_Frequency_Distribution.png Graphic file (type png)
 <use 03-ex2/Lastname_Frequency_Distribution.png>
 Package pdftex.def Info: 03-ex2/Lastname_Frequency_Distribution.png  used on in
-put line 64.
+put line 67.
 (pdftex.def)             Requested size: 380.69788pt x 453.19962pt.
- [4 <./03-ex2/Lastname_Frequency_Distribution.png (PNG copy)>]
-<03-ex2/Lastname_Frequency_Distribution_Plain.png, id=102, 1686.3pt x 2007.5pt>
 
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<03-ex2/Lastname_Frequency_Distribution_Plain.png, id=86, 1686.3pt x 2007.5pt>
 File: 03-ex2/Lastname_Frequency_Distribution_Plain.png Graphic file (type png)
 <use 03-ex2/Lastname_Frequency_Distribution_Plain.png>
 Package pdftex.def Info: 03-ex2/Lastname_Frequency_Distribution_Plain.png  used
- on input line 75.
+ on input line 78.
 (pdftex.def)             Requested size: 380.69788pt x 453.19962pt.
- [5 <./03-ex2/Lastname_Frequency_Distribution_Plain.png (PNG copy)>] [6]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[4] [5 <./03-ex2/Lastname_Frequency_Distribution.png (PNG copy)>] [6 <./03-ex2/
+Lastname_Frequency_Distribution_Plain.png (PNG copy)>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 148.
+(Font)              <8> on input line 151.
  [7]
-<03-ex2/Secure_Lastname_Frequency_Distribution.png, id=179, 1686.3pt x 2007.5pt
+<03-ex2/Secure_Lastname_Frequency_Distribution.png, id=180, 1686.3pt x 2007.5pt
 >
 File: 03-ex2/Secure_Lastname_Frequency_Distribution.png Graphic file (type png)
 
 <use 03-ex2/Secure_Lastname_Frequency_Distribution.png>
 Package pdftex.def Info: 03-ex2/Secure_Lastname_Frequency_Distribution.png  use
-d on input line 158.
+d on input line 161.
 (pdftex.def)             Requested size: 380.69788pt x 453.19962pt.
-<03-ex2/Secure_Lastname_Frequency_Distribution_Plain.png, id=180, 1686.3pt x 20
+<03-ex2/Secure_Lastname_Frequency_Distribution_Plain.png, id=181, 1686.3pt x 20
 07.5pt>
 File: 03-ex2/Secure_Lastname_Frequency_Distribution_Plain.png Graphic file (typ
 e png)
 <use 03-ex2/Secure_Lastname_Frequency_Distribution_Plain.png>
 Package pdftex.def Info: 03-ex2/Secure_Lastname_Frequency_Distribution_Plain.pn
-g  used on input line 167.
+g  used on input line 170.
 (pdftex.def)             Requested size: 380.69788pt x 453.19962pt.
 
 
@@ -1022,13 +1025,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 24752 strings out of 474963
- 428827 string characters out of 5774095
- 2083187 words of memory out of 5000000
- 46533 multiletter control sequences out of 15000+600000
+ 24569 strings out of 474963
+ 425192 string characters out of 5774095
+ 2077187 words of memory out of 5000000
+ 46350 multiletter control sequences out of 15000+600000
  664979 words of font info for 119 fonts, out of 8000000 for 9000
  726 hyphenation exceptions out of 8191
- 75i,12n,81p,1722b,2073s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,81p,1722b,2079s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
 texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf-dist/fonts/type1/
 public/lm/lmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></u
@@ -1048,10 +1051,10 @@ mssbx10.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share
 public/lm/lmsy7.pfb></usr/share/texmf-dist/fonts/type1/public/lm/lmsy9.pfb></us
 r/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf-dist/font
 s/type1/public/lm/lmtt9.pfb>
-Output written on main.pdf (10 pages, 1743300 bytes).
+Output written on main.pdf (10 pages, 1723905 bytes).
 PDF statistics:
- 386 PDF objects out of 1000 (max. 8388607)
- 311 compressed objects within 4 object streams
+ 387 PDF objects out of 1000 (max. 8388607)
+ 312 compressed objects within 4 object streams
  160 named destinations out of 1000 (max. 500000)
  29 words of extra memory for PDF output out of 10000 (max. 10000000)
 

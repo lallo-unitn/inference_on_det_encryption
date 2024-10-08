@@ -2,27 +2,27 @@
 
 \subsection{Approach for Proving Information Leakage in SSE Schemes}
 
-As described in the assignment text, in order to to prove an upper bound for the information leaked, or to quantifying the information leakeage for an SSE scheme, we base our approach on simulation-based experiments as per Curtmola et
-al. \cite{article:curtmola}. In particular, we base our approach on the simulation for proving non-adaptive semantic security.
+As described in the assignment text, to prove an upper bound for the information leaked, or to quantify the information leakage for an SSE scheme, we base our approach on simulation-based experiments as per Curtmola et
+al. In particular, we base our approach on simulation to prove non-adaptive semantic security.
 
 We perform the following:
 
 \begin{itemize}
-    \item \textbf{Define the Leakage Function \textit{L}}: the leakage function expresses which information are exposed to an adversary during the execution of a protocol based on the given SSE schema. In particular, this function specify the nature of the leaked information, e.g. number of document, access frequencies, etc. This leakage is then given as input to the simulator.
-    \item \textbf{Construct a simulator \textit{S} for the protocol with the stated leakage \textit{L}}: the simulator is an algorithm that simulates the adversary view of the real protocol. This algorithm takes as input the leakeage of the SSE schema and simulate an output that needs to appear indistinguishable from the output of the execution of the real protocol.
-    \item \textbf{Prove indistinguishability of the execution from the adversary perspective}: the adversary (or distinguisher) send the challenger a set of query. The challenger execute either the real or the simulated protocol. Indistinguishability is proven if the adversary is not able to distinguish between the real and the simulated output with a negligible advantage $\epsilon$ .
+    \item \textbf{Define the Leakage Function \textit{L}}: the leakage function expresses which information is exposed to an adversary when executing a protocol based on the given SSE schema. In particular, this function specifies the nature of the leaked information, e.g. number of documents, access frequencies, etc. This leakage is then given as input to the simulator.
+    \item \textbf{Construct a simulator \textit{S} for the protocol with the stated leakage \textit{L}}: the simulator is an algorithm that simulates the adversary view of the real protocol. This algorithm takes as input the leakage of the SSE schema and simulates an output that needs to appear indistinguishable from the output of the execution of the real protocol.
+    \item \textbf{Prove indistinguishability of the execution from the adversary perspective}: the adversary (or distinguisher) sends the challenger a set of queries. The challenger execute either the real or the simulated protocol. Indistinguishability is proven if the adversary is not able to distinguish between the real and the simulated output with a negligible advantage $\epsilon$ .
 \end{itemize}
 
 \subsection{Leakage statement}
 
-The provided SSE scheme present the following elements in the leakage: 
+The provided SSE scheme presents the following elements in the leakage: 
 
 \begin{itemize}
     \item \textbf{Number of documents $|\pazocal{D}|$}: since by construction documents $D_i$ are mapped one-to-one to encrypted keywords sets $C_i$, the number of $C_i$ sets is equal to the number of documents. Since the index is $\pazocal{I}={C_1,...,C_d}$, where $d$ is the number of documents, the number of documents is leaked.
     \item \textbf{Number of keywords per document $n_i=|C_i|$}: since the index $\pazocal{I}$ contains the set of encrypted keywords $C_i$, the number of keywords associated to a document $C_i$ is leaked.
     \item \textbf{Keyword equality - number of distinct keywords}: since we the keywords are encrypted using a deterministic pseudorandom function $F:{0,1}^\lambda \times {0,1}^* \rightarrow {0,1}^n$, for equal keywords $p_i = p_j$ the pseudorandom function $F$ will return equal results $\gamma _i=F(k,p_i)=F(k,p_j)=\gamma _j$. This leaks the number of distinct keywords.
-    \item \textbf{Search pattern $SP(\textbf{q})$}: the adversary is able to determine what queries are for the same keyword since the search tokens $\tau _q$ are deterministically computed using pseudorandom permutation $F$.
-    \item \textbf{Access pattern $AP(\textbf{q})$}: the adversary is able to determine what document identifiers are returned for a given query $q_i$ as query result $D(q_i)$.
+    \item \textbf{Search pattern $SP(\textbf{q})$}: the adversary can determine what queries are for the same keyword since the search tokens $\tau _q$ are deterministically computed using pseudorandom permutation $F$.
+    \item \textbf{Access pattern $AP(\textbf{q})$}: the adversary can determine what document identifiers are returned for a given query $q_i$ as query result $D(q_i)$.
 \end{itemize}
 
 \subsection{Proof sketch}
@@ -34,9 +34,8 @@ For every $q_j\in SP(\textbf{q})$, set search token $\tau '_j=\gamma '_j$ instea
 We compare the simulated parameters with the real ones:
 
 \begin{itemize}
-    \item \textbf{$\pazocal{I}$ and $\pazocal{I'}$}: $\pazocal{I}$ is the collection ${C'_1,...,C'_d}$ containing the sets of the keywords of every document encrypted with deterministic pseudorandom permutation F. If collection $AP(\textbf{q})$ is non-empty, $\pazocal{I'}$ will contain the collection ${C'_1,...,C'_d}$ of the sets of the simulated keywords of the documents indexed in $AP(\textbf{q})$. The simulated encripted keywords are sampled uniformely and randomly and with lenght n, matching the length of the real keywords. Since the key used with F is not known by the distinguisher, it is not able to distinguish $C_i$ from $C'_i$.
+    \item \textbf{$\pazocal{I}$ and $\pazocal{I'}$}: $\pazocal{I}$ is the collection ${C'_1,...,C'_d}$ containing the sets of the keywords of every document encrypted with deterministic pseudorandom permutation F. If collection $AP(\textbf{q})$ is non-empty, $\pazocal{I'}$ will contain the collection ${C'_1,...,C'_d}$ of the sets of the simulated keywords of the documents indexed in $AP(\textbf{q})$. The simulated encrypted keywords are sampled uniformly and randomly and with length n, matching the length of the real keywords. Since the key used with F is not known by the distinguisher, it is not able to distinguish $C_i$ from $C'_i$.
     \item \textbf{$\tau _j$ and $\tau '_j$}: $\tau _j$ is computed via the deterministic F function and its value will match one of the real encrypted keywords. The value of $\tau '_j$ is assigned in such a way that for query $q_j$ in $SP(\textbf{q})$ it will be equal to simulated encrypted keyword $\gamma '_j$. 
 \end{itemize}
 
-Since the structure is preserved, the only way for a distinguisher to distinguish between real and simulated parameters is to be able to distinguish between the output of the random and uniform sampling and the output of the PRP function that is considered secure.
-
+Since the structure is preserved, the only way for a distinguisher to distinguish between real and simulated parameters is to be able to differentiate between the output of the random and uniform sampling and the output of the PRP function that is considered secure.

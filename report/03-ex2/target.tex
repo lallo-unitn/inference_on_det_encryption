@@ -1,8 +1,11 @@
 \section{Attacking Property-preserving Encryption}
 
+
+Since we developed the code for this assignment using Java, the project code is written in the .txt file separated by file name. The code is also accessible on \href{https://github.com/lallo-unitn/secure_cloud_assignment2/tree/main/cryptoDB/cryptodbProject/src/main/java/nl/ut/eemcs/cloudsec}{GitHub}.
+
 \subsection{Number of unique first names in the database}
 
-In the database there are a 100 unique first names stored. This number was determined by taking into consideration that the names in the database were encrypted using deterministic encryption. As a consequence, the number of unique encrypted first names is equivalent to the number of first names in the database.
+In the database, there are 100 unique first names stored. This number was determined by taking into consideration that the names in the database were encrypted using deterministic encryption. As a consequence, the number of unique encrypted first names is equivalent to the number of first names in the database.
 
 \begin{lstlisting}[language = Java, caption=Java Code to Count Unique First Names, firstnumber = last , escapeinside={(*@}{@*)}]
     public int getFirstNameCount() {
@@ -27,7 +30,7 @@ In the database there are a 100 unique first names stored. This number was deter
 
 To plot the distribution of the encrypted last names we determined the number of occurrences of each last name present in the database.
 
-Following, the code to compute the lastname frequency.
+Following is the code to compute the last name frequency.
 
 \begin{lstlisting}[language = Java, caption = Distribution of last names, firstnumber = last , escapeinside={(*@}{@*)}]
 
@@ -77,11 +80,11 @@ Following, the same graph with names in plaintext.
     \label{fig:Distribution-of-last-names-plain}
 \end{figure}
 
-As it can be seen, lastname Wang (which is the most popular last name) is mapped to the chipertext \\ \texttt{4f09d41d4e6975a14551b684e7ee7739c059bddfd813a8a05a74f88690791445}.
+As it can be seen, the last name Wang (which is the most popular last name) is mapped to the ciphertext \\ \texttt{4f09d41d4e6975a14551b684e7ee7739c059bddfd813a8a05a74f88690791445}.
 
 \subsection{Full names of all students who scored 99 points}
 
-There are 100 unique values stored in the database for grades. We also know that the grades can range from 1 to 100. This means that the data set for the grades is a dense dataset, since the complete plaintext space is encrypted. Since the grades are encrypted in an order-preserving manner, the lower numeric value of an encrypted grade corresponds to a lower plaintext value. Based on these information, we sorted the ciphertexts decreasingly, this is how we were able to recover the ciphertext value corresponding to 99.
+There are 100 unique values stored in the database for grades. We also know that the grades can range from 1 to 100. This means that the data set for the grades is a dense dataset since the complete plaintext space is encrypted. Since the grades are encrypted in an order-preserving manner, the lower numeric value of an encrypted grade corresponds to a lower plaintext value. Based on this information, we sorted the ciphertexts decreasingly, this is how we were able to recover the ciphertext value corresponding to 99.
 
 Following that, we queried all the records where the value of the grade was the previously determined one and we got the students who scored 99 points. The encrypted names could be mapped to the plaintext ones based on the given txt files (again, by leveraging the use of deterministic encryption).
 
@@ -149,9 +152,9 @@ public String getSecondUniqueHighestValue() {
 
 The main idea behind the $(\alpha,t)$-secure index is to protect against inference attacks by adding noise to the data in a structured way via clustering the result sets into different partitions. The $\alpha$ parameter specifies the minimum number of keywords that must share a similar access pattern. A higher $\alpha$ means more keywords will be grouped together, increasing privacy but possibly introducing more noise. The $t$ parameter indicates the maximum allowable Hamming distance (i.e., the number of differing bits) between the access patterns of keywords within the same group. A smaller $t$ ensures more similarity between access patterns, improving privacy but potentially leading to more false positives during search results.
 
-We implemented a $(4,0)$-secure index by a lookup function, which when searched for by their last names, returns results clusters of 4 keywords. This leads to confusing results when an adversary tries to map the distribution of names similarly to how it was described previously, but it also introduces multiple false-positive returned by also returning results for other 3 keywords, with which the client executing the query has to parse to identify.
+We implemented a $(4,0)$-secure index by a lookup function, which when searched for by their last names, returns results clusters of 4 keywords. This leads to confusing results when an adversary tries to map the distribution of names similarly to how it was described previously, but it also introduces multiple false positives returned by also returning results for the other 3 keywords, with which the client executing the query has to parse to identify.
 
-Following, the graph of lastnames' frequencies after implementing a $(4, 0)$-secure index search. As it can be seen, the previous easily mappable distribution is gone, instead clusters of 4 appeared.
+Following, is the graph of last name frequencies after implementing a $(4, 0)$-secure index search. As it can be seen, the previous easily mappable distribution is gone, instead, clusters of 4 appeared.
 
 \begin{figure}[h!]
     \centering
